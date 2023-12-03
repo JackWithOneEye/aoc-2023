@@ -1,0 +1,3 @@
+(test
+ (name aoc_2023)
+ (libraries base reason dream dream-livereload tyxml tyxml-jsx))

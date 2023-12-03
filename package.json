@@ -1,0 +1,12 @@
+{
+  "name": "aoc_2023",
+  "dependencies": {
+    "htmx.org": "^1.9.9"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.5"
+  },
+  "scripts": {
+    "build:dev": "bun build ./index.js --outdir ./static --watch"
+  }
+}

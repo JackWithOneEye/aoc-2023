@@ -1,0 +1,6 @@
+(executable
+ (public_name aoc_2023)
+ (name main)
+ (libraries aoc_2023 base components dream dream-livereload tyxml)
+ (preprocess
+  (pps lwt_ppx)))
