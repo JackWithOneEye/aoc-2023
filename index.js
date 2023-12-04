@@ -1,3 +1,3 @@
 import 'htmx.org';
 
-console.log('AOC 2023');
+console.log('¡AOC 2023!');
