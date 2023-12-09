@@ -1,23 +1,24 @@
 open Tyxml;
 open Base;
 
-let rec buttons = days => {
-  let day = Int.to_string(days);
-  switch (days) {
-  | 0 => []
-  | _ =>
-    buttons(days - 1)
-    @ [
-      <button
-        class_="p-1 border border-red-800 border-2 rounded-sm hover:bg-red-600 active:bg-red-700"
-        _hx_get={"day" ++ day}>
-        {Html.txt(day)}
-      </button>,
-    ]
-  };
-};
+let doors = solved_days =>
+  List.range(1, 24, ~stop=`inclusive)
+  |> List.map(~f=day =>
+       <button
+         class_="p-1 border border-red-800 border-2 rounded-sm cursor-pointer hover:bg-red-600 active:bg-red-700 data-[disabled=true]:bg-green-100 data-[disabled=true]:pointer-events-none"
+         _data_disabled={
+                          if (day > solved_days) {
+                            "true";
+                          } else {
+                            "false";
+                          }
+                        }
+         _hx_get={"day" ++ Int.to_string(day)}>
+         {Html.txt(Int.to_string(day))}
+       </button>
+     );
 
-let main =
+let main = solved_days =>
   <div
     id="doors"
     class_="grid grid-cols-4 gap-y-8 gap-x-16 h-full"
@@ -25,7 +26,7 @@ let main =
     _hx_swap="outerHTML"
     _hx_select="#form"
     _hx_push_url="true">
-    ...{buttons(24)}
+    ...{doors(solved_days)}
   </div>;
 
 let part_form = (path, part) =>

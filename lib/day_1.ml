@@ -1,7 +1,7 @@
 open Base
 
 module Problem : Problem.T = struct
-  let number = "1"
+  let number_of_day = "1"
 
   let part_a input =
     let rec find_first_digit char_list =
@@ -26,20 +26,17 @@ module Problem : Problem.T = struct
     let rec parse_chars char_list digits =
       match char_list with
       | [] -> digits
-      | 'o' :: 'n' :: 'e' :: tail -> parse_chars ([ 'e' ] @ tail) (digits @ [ 1 ])
-      | 't' :: 'w' :: 'o' :: tail -> parse_chars ([ 'o' ] @ tail) (digits @ [ 2 ])
-      | 't' :: 'h' :: 'r' :: 'e' :: 'e' :: tail ->
-        parse_chars ([ 'e' ] @ tail) (digits @ [ 3 ])
-      | 'f' :: 'o' :: 'u' :: 'r' :: tail -> parse_chars tail (digits @ [ 4 ])
-      | 'f' :: 'i' :: 'v' :: 'e' :: tail -> parse_chars ([ 'e' ] @ tail) (digits @ [ 5 ])
-      | 's' :: 'i' :: 'x' :: tail -> parse_chars tail (digits @ [ 6 ])
-      | 's' :: 'e' :: 'v' :: 'e' :: 'n' :: tail ->
-        parse_chars ([ 'n' ] @ tail) (digits @ [ 7 ])
-      | 'e' :: 'i' :: 'g' :: 'h' :: 't' :: tail ->
-        parse_chars ([ 't' ] @ tail) (digits @ [ 8 ])
-      | 'n' :: 'i' :: 'n' :: 'e' :: tail -> parse_chars ([ 'e' ] @ tail) (digits @ [ 9 ])
+      | 'o' :: 'n' :: 'e' :: tail -> parse_chars ('e' :: tail) (1 :: digits)
+      | 't' :: 'w' :: 'o' :: tail -> parse_chars ('o' :: tail) (2 :: digits)
+      | 't' :: 'h' :: 'r' :: 'e' :: 'e' :: tail -> parse_chars ('e' :: tail) (3 :: digits)
+      | 'f' :: 'o' :: 'u' :: 'r' :: tail -> parse_chars tail (4 :: digits)
+      | 'f' :: 'i' :: 'v' :: 'e' :: tail -> parse_chars ('e' :: tail) (5 :: digits)
+      | 's' :: 'i' :: 'x' :: tail -> parse_chars tail (6 :: digits)
+      | 's' :: 'e' :: 'v' :: 'e' :: 'n' :: tail -> parse_chars ('n' :: tail) (7 :: digits)
+      | 'e' :: 'i' :: 'g' :: 'h' :: 't' :: tail -> parse_chars ('t' :: tail) (8 :: digits)
+      | 'n' :: 'i' :: 'n' :: 'e' :: tail -> parse_chars ('e' :: tail) (9 :: digits)
       | head :: tail when Char.is_digit head ->
-        parse_chars tail (digits @ [ Char.get_digit_exn head ])
+        parse_chars tail (Char.get_digit_exn head :: digits)
       | _ :: tail -> parse_chars tail digits
     in
     let rec calculate_sum lines =
@@ -52,11 +49,11 @@ module Problem : Problem.T = struct
           match digits with
           | [] -> 0
           | head :: tail ->
-            (head * 10)
-            +
-              (match List.rev tail with
-              | [] -> head
-              | rev_head :: _ -> rev_head)
+            head
+            + ((match List.rev tail with
+                | [] -> head
+                | rev_head :: _ -> rev_head)
+               * 10)
         in
         res + calculate_sum tail
     in

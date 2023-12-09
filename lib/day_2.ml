@@ -1,7 +1,7 @@
 open Base
 
 module Problem : Problem.T = struct
-  let number = "2"
+  let number_of_day = "2"
 
   let rec every func list =
     match list with

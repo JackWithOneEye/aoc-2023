@@ -3,7 +3,7 @@ open Base
 open Components
 
 let html_to_string html = Fmt.str "%a" (Tyxml.Html.pp ()) html
-let elt_to_string elt = Fmt.str "%a" (Tyxml.Html.pp_elt ()) elt
+(* let elt_to_string elt = Fmt.str "%a" (Tyxml.Html.pp_elt ()) elt *)
 
 let post_handler fn request =
   let open Lwt.Syntax in
@@ -14,30 +14,37 @@ let post_handler fn request =
 ;;
 
 let day_subrouter (module Problem : Problem.T) =
-  let sub_root = "/day" ^ Problem.number in
+  let sub_root = "/day" ^ Problem.number_of_day in
+  let page_html =
+    Index.day ("Day " ^ Problem.number_of_day) sub_root |> Index.layout |> html_to_string
+  in
   Dream.scope
     sub_root
     []
-    [ Dream.get "" (fun _ ->
-        Index.day ("Day " ^ Problem.number) sub_root
-        |> Index.layout
-        |> elt_to_string
-        |> Dream.html)
+    [ Dream.get "" (fun _ -> page_html |> Dream.html)
     ; Dream.post "/a" (post_handler Problem.part_a)
     ; Dream.post "/b" (post_handler Problem.part_b)
     ]
 ;;
 
 let () =
+  let subrouters =
+    [ day_subrouter (module Day_1.Problem)
+    ; day_subrouter (module Day_2.Problem)
+    ; day_subrouter (module Day_3.Problem)
+    ; day_subrouter (module Day_4.Problem)
+    ]
+  in
+  let main_html =
+    subrouters |> List.length |> Index.main |> Index.layout |> html_to_string
+  in
   Dream.run
   @@ Dream.logger
   @@ Dream_livereload.inject_script ()
   @@ Dream.router
-       [ Dream.get "/" (fun _ ->
-           Index.main |> Index.layout |> html_to_string |> Dream.html)
-       ; day_subrouter (module Day_1.Problem)
-       ; day_subrouter (module Day_2.Problem)
-       ; Dream.get "/static/**" @@ Dream.static "./static"
-       ; Dream_livereload.route ()
-       ]
+       ([ Dream.get "/" (fun _ -> main_html |> Dream.html)
+        ; Dream.get "/static/**" @@ Dream.static "./static"
+        ; Dream_livereload.route ()
+        ]
+        @ subrouters)
 ;;
