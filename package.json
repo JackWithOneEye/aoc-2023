@@ -7,7 +7,7 @@
     "tailwindcss": "^3.3.5"
   },
   "scripts": {
-    "build:dev": "bun build ./index.js --outdir ./static --watch",
+    "build": "bun build ./index.js --outdir ./static --minify",
     "tailwind:dev": "bunx tailwindcss -i input.css -o static/styles.css -w"
   }
 }
