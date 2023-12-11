@@ -36,6 +36,7 @@ let () =
     ; day_subrouter (module Day_5.Problem)
     ; day_subrouter (module Day_6.Problem)
     ; day_subrouter (module Day_7.Problem)
+    ; day_subrouter (module Day_8.Problem)
     ]
   in
   let main_html =
