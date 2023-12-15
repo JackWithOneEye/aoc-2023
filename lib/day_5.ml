@@ -22,18 +22,27 @@ module Problem : Problem.T = struct
         { src_range_start; dest_range_start; range_len }
       | _ -> failwith "NOPE!!"
     in
-    let rec parse_maps curr_map lines =
+    let rec parse_maps lines =
+      let rec parse_lines_of_map lines =
+        match lines with
+        | head :: tail when String.is_empty head -> [], head :: tail
+        | head :: tail ->
+          let map, rest = parse_lines_of_map tail in
+          line_to_conversion head :: map, rest
+        | _ -> [], []
+      in
       match lines with
-      | head :: tail when String.is_empty head -> parse_maps curr_map tail
+      | head :: tail when String.is_empty head -> parse_maps tail
       | head :: tail when String.is_suffix head ~suffix:"map:" ->
-        curr_map :: parse_maps [] tail
-      | head :: tail -> parse_maps (line_to_conversion head :: curr_map) tail
-      | [] -> [ curr_map ]
+        let map, rest = parse_lines_of_map tail in
+        map :: parse_maps rest
+      | [] -> []
+      | _ -> failwith "NO ?????"
     in
     input
     |> String.split_lines
     |> function
-    | seeds :: rest -> parse_seeds seeds, parse_maps [] rest
+    | seeds :: rest -> parse_seeds seeds, parse_maps rest
     | _ -> failwith "NOPE!!!"
   ;;
 
@@ -63,7 +72,7 @@ module Problem : Problem.T = struct
     }
 
   (* brute force :( *)
-  let part_b input =
+  (* let part_b input =
     let seeds, maps = parse_input input in
     let rec collect_seed_ranges seeds =
       match seeds with
@@ -82,6 +91,88 @@ module Problem : Problem.T = struct
     |> List.fold ~init:Int.max_value ~f:(fun acc range ->
       let min_location = min_location_of_range range in
       min acc min_location)
+    |> Fmt.str "%d"
+  ;; *)
+
+  type range_mapping =
+    | None
+    | Full
+    | RightHalf
+    | LeftHalf
+    | ThreeWay
+
+  let get_range_mapping { src_range_start; dest_range_start = _; range_len } range =
+    let range_end = range.start + range.length - 1 in
+    let src_range_end = src_range_start + range_len - 1 in
+    if range.start > src_range_end || range_end < src_range_start
+    then None
+    else if range.start >= src_range_start && range_end <= src_range_end
+    then Full
+    else if range.start < src_range_start
+            && range_end >= src_range_start
+            && range_end <= src_range_end
+    then RightHalf
+    else if range.start >= src_range_start
+            && range.start <= src_range_end
+            && range_end > src_range_end
+    then LeftHalf
+    else if range.start < src_range_start && range_end > src_range_end
+    then ThreeWay
+    else failwith "!!!"
+  ;;
+
+  let rec map_range map range =
+    match map with
+    | { src_range_start; dest_range_start; range_len } :: rest ->
+      let range_end = range.start + range.length - 1 in
+      let src_range_end = src_range_start + range_len - 1 in
+      let shift = dest_range_start - src_range_start in
+      (match get_range_mapping { src_range_start; dest_range_start; range_len } range with
+       | None -> map_range rest range
+       | Full -> [ { start = range.start + shift; length = range.length } ]
+       | RightHalf ->
+         { start = dest_range_start; length = range_end - src_range_start + 1 }
+         :: map_range rest { start = range.start; length = src_range_start - range.start }
+       | LeftHalf ->
+         { start = range.start + shift; length = src_range_end - range.start + 1 }
+         :: map_range
+              rest
+              { start = src_range_end + 1; length = range_end - src_range_end }
+       | ThreeWay ->
+         map_range rest { start = range.start; length = src_range_start - range.start }
+         @ ({ start = dest_range_start; length = range_len }
+            :: map_range
+                 rest
+                 { start = src_range_end + 1; length = range_end - src_range_end }))
+    | [] -> [ range ]
+  ;;
+
+  (* ¡SMART FORCE! *)
+  let part_b input =
+    let rec collect_seed_ranges seeds =
+      match seeds with
+      | start :: length :: rest -> { start; length } :: collect_seed_ranges rest
+      | [] -> []
+      | _ -> failwith "NOPE!!"
+    in
+    let map_ranges ranges map =
+      ranges
+      |> List.fold ~init:[] ~f:(fun mapped_ranges range ->
+        map_range map range @ mapped_ranges)
+    in
+    let map_range_to_location_ranges maps range =
+      maps
+      |> List.fold ~init:[ range ] ~f:map_ranges
+      |> List.min_elt ~compare:(fun a b -> a.start - b.start)
+      |> function
+      | None -> 0
+      | Some { start; length = _ } -> start
+    in
+    let seeds, maps = parse_input input in
+    seeds
+    |> collect_seed_ranges
+    |> List.fold ~init:Int.max_value ~f:(fun min_loc range ->
+      range |> map_range_to_location_ranges maps |> min min_loc)
     |> Fmt.str "%d"
   ;;
 end
