@@ -19,9 +19,10 @@
  (name aoc_2023)
  (synopsis "A short synopsis")
  (description "A longer description")
- (depends (ocaml
+ (depends
+  (ocaml
    (>= "5.0"))
-  base
+  core
   dune
   dream
   dream-livereload
