@@ -39,6 +39,7 @@ let day_subrouters =
   ; (module Day_9.Problem)
   ; (module Day_10.Problem)
   ; (module Day_11.Problem)
+  ; (module Day_12.Problem)
   ]
   |> List.map ~f:day_subrouter
 ;;

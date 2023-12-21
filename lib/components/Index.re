@@ -44,7 +44,8 @@ let part_form = (path, part) =>
       />
       <button
         class_="p-1 border border-red-800 border-2 rounded-sm hover:bg-red-600 active:bg-red-700">
-        "Submit"
+        <span> "Submit" </span>
+        <span class_="htmx-indicator"> "..." </span>
       </button>
     </form>
     <div class_="flex">
