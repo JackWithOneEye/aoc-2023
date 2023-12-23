@@ -1,24 +1,8 @@
 open Base
+open Util
 
 module Problem : Problem.T = struct
   let number_of_day = "10"
-
-  module Direction = struct
-    type t =
-      | Up
-      | Right
-      | Down
-      | Left
-
-    let ( == ) a b =
-      match a, b with
-      | Up, Up -> true
-      | Right, Right -> true
-      | Down, Down -> true
-      | Left, Left -> true
-      | _ -> false
-    ;;
-  end
 
   module Coord = struct
     type t =
