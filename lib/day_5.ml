@@ -95,7 +95,7 @@ module Problem : Problem.T = struct
   ;; *)
 
   type range_mapping =
-    | None
+    | Equal
     | Full
     | RightHalf
     | LeftHalf
@@ -105,7 +105,7 @@ module Problem : Problem.T = struct
     let range_end = range.start + range.length - 1 in
     let src_range_end = src_range_start + range_len - 1 in
     if range.start > src_range_end || range_end < src_range_start
-    then None
+    then Equal
     else if range.start >= src_range_start && range_end <= src_range_end
     then Full
     else if range.start < src_range_start
@@ -128,7 +128,7 @@ module Problem : Problem.T = struct
       let src_range_end = src_range_start + range_len - 1 in
       let shift = dest_range_start - src_range_start in
       (match get_range_mapping { src_range_start; dest_range_start; range_len } range with
-       | None -> map_range rest range
+       | Equal -> map_range rest range
        | Full -> [ { start = range.start + shift; length = range.length } ]
        | RightHalf ->
          { start = dest_range_start; length = range_end - src_range_start + 1 }

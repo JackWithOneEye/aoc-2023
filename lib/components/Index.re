@@ -56,7 +56,18 @@ let part_form = (path, part) =>
 
 let day = (title, path) =>
   <div id="form" class_="flex flex-col gap-4 h-full w-full">
-    <h2 class_="text-2xl"> {Html.txt(title)} </h2>
+    <div class_="flex justify-between pb-2">
+      <h2 class_="text-2xl"> {Html.txt(title)} </h2>
+      <button
+        class_="px-2 py-1 border border-red-800 border-2 rounded-sm hover:bg-red-400 active:bg-red-600"
+        _hx_get="/"
+        _hx_target="#form"
+        _hx_select="#doors"
+        _hx_swap="outerHTML"
+        _hx_push_url="true">
+        <span> "Back" </span>
+      </button>
+    </div>
     <div class_="flex-1 grid grid-cols-2 gap-16">
       {part_form(path, "a")}
       {part_form(path, "b")}
@@ -83,7 +94,7 @@ let layout = content =>
         <main class_="contents">
           <div class_="flex flex-col flex-1 gap-x-4 gap-y-4 overflow-auto p-4">
             <div
-              class_="w-full bg-green-200 border border-red-900 border-4 rounded-sm shadow flex-1 p-16">
+              class_="w-full bg-green-200 border border-red-900 border-4 rounded-sm shadow flex-1 p-12">
               content
             </div>
           </div>

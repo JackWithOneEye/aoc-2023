@@ -28,7 +28,7 @@ module Problem : Problem.T = struct
     List.fold2 times distances ~init:1 ~f:(fun acc time distance ->
       possible_wins time distance * acc)
     |> function
-    | Ok res -> Fmt.str "%d" res
+    | List.Or_unequal_lengths.Ok res -> Fmt.str "%d" res
     | _ -> failwith "WRONG!!"
   ;;
 

@@ -6,14 +6,29 @@ module Direction = struct
     | Right
     | Down
     | Left
+  [@@deriving compare, equal, hash, sexp_of]
 
-  let ( == ) a b =
-    match a, b with
-    | Up, Up -> true
-    | Right, Right -> true
-    | Down, Down -> true
-    | Left, Left -> true
-    | _ -> false
+  let ( == ) a b = equal a b
+  let ( != ) a b = not (equal a b)
+
+  let get_orthogonals = function
+    | Up | Down -> [ Left; Right ]
+    | Right | Left -> [ Up; Down ]
+  ;;
+
+  let to_string = function
+    | Up -> "Up"
+    | Right -> "Right"
+    | Down -> "Down"
+    | Left -> "Left"
+  ;;
+
+  let move_coordinate ?(steps = 1) (x, y) direction =
+    match direction with
+    | Up -> x, y - steps
+    | Right -> x + steps, y
+    | Down -> x, y + steps
+    | Left -> x - steps, y
   ;;
 end
 

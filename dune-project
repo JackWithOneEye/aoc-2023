@@ -23,9 +23,12 @@
   (ocaml
    (>= "5.0"))
   core
+  core_kernel
   dune
   dream
   dream-livereload
+  ppx_deriving
+  ppx_jane
   reason
   tyxml
   tyxml-jsx)

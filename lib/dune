@@ -1,3 +1,5 @@
 (library
  (name aoc_2023)
- (libraries components core fmt re str))
+ (libraries components core core_kernel.pairing_heap fmt re str)
+ (preprocess
+  (pps ppx_jane ppx_deriving.show)))

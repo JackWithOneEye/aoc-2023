@@ -148,7 +148,7 @@ module Problem : Problem.T = struct
   let part_a input =
     let grid, start = parse_input input in
     let steps_in_loop =
-      [ Up; Right; Down; Left ]
+      Direction.[ Up; Right; Down; Left ]
       |> List.find_map_exn ~f:(fun direction ->
         match travel_loop grid { coord = start; direction } with
         | 0 -> None
@@ -160,7 +160,7 @@ module Problem : Problem.T = struct
   let part_b input =
     let grid, start = parse_input input in
     let _ =
-      [ Right; Left ]
+      Direction.[ Right; Left ]
       |> List.find ~f:(fun direction ->
         travel_loop grid { coord = start; direction } <> 0)
     in
