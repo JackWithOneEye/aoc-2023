@@ -4,59 +4,61 @@ module Problem : Problem.T = struct
   let number_of_day = "1"
 
   let part_a input =
-    let rec find_first_digit char_list =
-      match char_list with
+    let rec calibration_value chars =
+      match chars with
+      | head :: tail when Char.is_digit head ->
+        let first = Char.get_digit_exn head in
+        let last =
+          tail
+          |> List.rev
+          |> List.find_map ~f:(fun char ->
+            if Char.is_digit char then Some (Char.get_digit_exn char) else None)
+          |> function
+          | Some digit -> digit
+          | None -> first
+        in
+        (first * 10) + last
+      | _ :: tail -> calibration_value tail
       | [] -> 0
-      | head :: _ when Char.is_digit head -> Char.get_digit_exn head
-      | _ :: tail -> find_first_digit tail
     in
-    let rec calculate_sum lines =
-      match lines with
-      | [] -> 0
-      | head :: tail ->
-        let chars = String.to_list head in
-        (find_first_digit chars * 10)
-        + find_first_digit (List.rev chars)
-        + calculate_sum tail
-    in
-    input |> String.split_lines |> calculate_sum |> Fmt.str "%d"
+    input
+    |> String.split_lines
+    |> List.fold ~init:0 ~f:(fun acc line ->
+      line |> String.to_list |> calibration_value |> ( + ) acc)
+    |> Fmt.str "%d"
   ;;
 
   let part_b input =
-    let rec parse_chars char_list digits =
-      match char_list with
-      | [] -> digits
-      | 'o' :: 'n' :: 'e' :: tail -> parse_chars ('e' :: tail) (1 :: digits)
-      | 't' :: 'w' :: 'o' :: tail -> parse_chars ('o' :: tail) (2 :: digits)
-      | 't' :: 'h' :: 'r' :: 'e' :: 'e' :: tail -> parse_chars ('e' :: tail) (3 :: digits)
-      | 'f' :: 'o' :: 'u' :: 'r' :: tail -> parse_chars tail (4 :: digits)
-      | 'f' :: 'i' :: 'v' :: 'e' :: tail -> parse_chars ('e' :: tail) (5 :: digits)
-      | 's' :: 'i' :: 'x' :: tail -> parse_chars tail (6 :: digits)
-      | 's' :: 'e' :: 'v' :: 'e' :: 'n' :: tail -> parse_chars ('n' :: tail) (7 :: digits)
-      | 'e' :: 'i' :: 'g' :: 'h' :: 't' :: tail -> parse_chars ('t' :: tail) (8 :: digits)
-      | 'n' :: 'i' :: 'n' :: 'e' :: tail -> parse_chars ('e' :: tail) (9 :: digits)
-      | head :: tail when Char.is_digit head ->
-        parse_chars tail (Char.get_digit_exn head :: digits)
-      | _ :: tail -> parse_chars tail digits
+    let parse_chars char_list =
+      let rec aux char_list acc =
+        match char_list with
+        | [] -> acc
+        | 'o' :: 'n' :: 'e' :: tail -> aux ('e' :: tail) (1 :: acc)
+        | 't' :: 'w' :: 'o' :: tail -> aux ('o' :: tail) (2 :: acc)
+        | 't' :: 'h' :: 'r' :: 'e' :: 'e' :: tail -> aux ('e' :: tail) (3 :: acc)
+        | 'f' :: 'o' :: 'u' :: 'r' :: tail -> aux tail (4 :: acc)
+        | 'f' :: 'i' :: 'v' :: 'e' :: tail -> aux ('e' :: tail) (5 :: acc)
+        | 's' :: 'i' :: 'x' :: tail -> aux tail (6 :: acc)
+        | 's' :: 'e' :: 'v' :: 'e' :: 'n' :: tail -> aux ('n' :: tail) (7 :: acc)
+        | 'e' :: 'i' :: 'g' :: 'h' :: 't' :: tail -> aux ('t' :: tail) (8 :: acc)
+        | 'n' :: 'i' :: 'n' :: 'e' :: tail -> aux ('e' :: tail) (9 :: acc)
+        | head :: tail when Char.is_digit head -> aux tail (Char.get_digit_exn head :: acc)
+        | _ :: tail -> aux tail acc
+      in
+      aux char_list []
     in
-    let rec calculate_sum lines =
-      match lines with
+    let calibration_value line =
+      line
+      |> String.to_list
+      |> parse_chars
+      |> function
       | [] -> 0
-      | head :: tail ->
-        let chars = String.to_list head in
-        let digits = parse_chars chars [] in
-        let res =
-          match digits with
-          | [] -> 0
-          | head :: tail ->
-            head
-            + ((match List.rev tail with
-                | [] -> head
-                | rev_head :: _ -> rev_head)
-               * 10)
-        in
-        res + calculate_sum tail
+      | [ digit ] -> (digit * 10) + digit
+      | last_digit :: tail -> (List.last_exn tail * 10) + last_digit
     in
-    input |> String.split_lines |> calculate_sum |> Fmt.str "%d"
+    input
+    |> String.split_lines
+    |> List.fold ~init:0 ~f:(fun acc line -> acc + calibration_value line)
+    |> Fmt.str "%d"
   ;;
 end

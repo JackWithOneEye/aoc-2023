@@ -33,7 +33,7 @@ module Problem : Problem.T = struct
       Array.set
         boxes
         box_idx
-        (match Util.replace box lens ~f:(match_label label) with
+        (match Util.replace_first box lens ~f:(match_label label) with
          | Some box -> box
          | None -> lens :: box)
     in
@@ -46,7 +46,7 @@ module Problem : Problem.T = struct
         Array.set
           boxes
           box_idx
-          (match Util.remove box ~f:(match_label label) with
+          (match Util.remove_first box ~f:(match_label label) with
            | Some box -> box
            | None -> box)
       | None -> put_box step);

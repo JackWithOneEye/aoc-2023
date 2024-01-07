@@ -4,10 +4,6 @@ open Util
 module Problem : Problem.T = struct
   let number_of_day = "17"
 
-  module Coordinate = struct
-    type t = int * int [@@deriving equal]
-  end
-
   module VisitedNode = struct
     type t =
       { position : int * int

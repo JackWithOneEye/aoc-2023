@@ -64,15 +64,6 @@ module Problem : Problem.T = struct
   ;;
 
   let part_b input =
-    let rec euclid a b =
-      match a, b with
-      | _, 0 -> a
-      | _ -> euclid b (Int.rem a b)
-    in
-    let lcm a b =
-      let gcd = euclid a b in
-      a / gcd * b
-    in
     let instructions, network = parse_input input in
     let steps_to_destination =
       steps_to_destination network instructions ~is_destination:(fun label ->
@@ -90,6 +81,6 @@ module Problem : Problem.T = struct
         let node = Hashtbl.find_exn network key in
         steps_to_destination instructions node :: acc)
     in
-    steps |> List.fold ~init:1 ~f:lcm |> Fmt.str "%d"
+    steps |> Util.lcm |> Fmt.str "%d"
   ;;
 end

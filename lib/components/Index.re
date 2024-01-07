@@ -30,7 +30,7 @@ let main = solved_days =>
   </div>;
 
 let part_form = (path, part) =>
-  <div class_="flex flex-col">
+  <div class_="flex flex-col gap-1">
     <h3 class_="text-1xl"> {Html.txt(part ++ ")")} </h3>
     <form
       class_="flex-1 flex flex-col gap-2"
@@ -38,7 +38,7 @@ let part_form = (path, part) =>
       _hx_target={"#result-" ++ part}
       _hx_swap="innerHTML">
       <textarea
-        class_="flex-1"
+        class_="flex-1 border border-red-800 border-2 bg-green-50 rounded-sm focus:bg-green-100 outline-none p-1"
         name="input"
         placeholder="Insert input here..."
       />
